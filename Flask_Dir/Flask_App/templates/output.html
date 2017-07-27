@@ -41,7 +41,7 @@
 <br><br>
     <div class="container">
     <div class="starter-template">
-        <h2>Your Highlights</h2>
+        <h2>AutoHighlights</h2>
         <br><br>
         <!--<p>Enter article information</p> -->
     </div>
@@ -51,7 +51,7 @@
       <form  action="/output" method="GET">
         <div class="form-group">
           <label for="in_url">Article URL:</label>
-          <input type="text" id="in_url" name='in_url' placeholder="e.g. ">
+          <input type="url" id="in_url" name='in_url' placeholder="e.g. ">
         </div>
         <div>
           <button type="submit" class="btn btn-default btn-lg">Find Highlight!</button>
@@ -67,7 +67,7 @@
       <div class="starter-template">
         <h3></h3>
         {% for q_row in q_results_dict %}
-        <p class="lead">For the article {{q_row['title']}} by {{ q_row['username']}}, your highlight is:<br><br>
+        <p>For the article {{q_row['title']}} by {{ q_row['username']}}, your highlight is:<br><br>
                         <b>{{ q_row['highlight'] }}</b> <br><br>
                         (Popular on {{ q_row['popdate'] }}, with {{ q_row['nlikes'] }} favorites.)
         </p>
