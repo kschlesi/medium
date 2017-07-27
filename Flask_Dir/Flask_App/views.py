@@ -1,12 +1,12 @@
 
 from flask import render_template, request
-from flaskexample import app
+from Flask_App import app
 from sqlalchemy import create_engine
 from sqlalchemy_utils import database_exists, create_database
 import pandas as pd
 import psycopg2
 #import a_Model as mod
-from flaskexample import a_Model as mod
+from Flask_App import a_Model as mod
 
 user = 'kimberly' #add your username here (same as previous postgreSQL)                      
 host = 'localhost'
