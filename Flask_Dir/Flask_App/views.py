@@ -10,57 +10,36 @@ from Flask_App import a_Model as mod
 
 user = 'kimberly' #add your username here (same as previous postgreSQL)                      
 host = 'localhost'
-dbname = 'birth_db'
+dbname = 'medium'
 db = create_engine('postgres://%s%s/%s'%(user,host,dbname))
 con = None
 con = psycopg2.connect(database = dbname, user = user)
 
 @app.route('/')
 @app.route('/index')
-def index():
-    return render_template("index.html",
-       title = 'Home', user = { 'nickname': 'Kim' },
-       )
-
-@app.route('/db')
-def birth_page():
-    sql_query = """                                                                       
-                SELECT * FROM birth_data_table WHERE delivery_method='Cesarean';          
-                """
-    query_results = pd.read_sql_query(sql_query,con)
-    births = ""
-    for i in range(0,10):
-        births += query_results.iloc[i]['birth_month']
-        births += "<br>"
-    return births
-
-@app.route('/db_fancy')
-def cesareans_page_fancy():
-    sql_query = """
-                SELECT index, attendant, birth_month FROM birth_data_table WHERE delivery_method='Cesarean';
-                """
-    query_results=pd.read_sql_query(sql_query,con)
-    births = []
-    for i in range(0,query_results.shape[0]):
-        births.append(dict(index=query_results.iloc[i]['index'], attendant=query_results.iloc[i]['attendant'], birth_month=query_results.iloc[i]['birth_month']))
-    return render_template('caesareans.html',births=births)    
-
 @app.route('/input')
-def cesareans_input():
-    return render_template("input.html")
+def url_input():
+    return render_template("input.html")#,
+       #title = 'Home', user = { 'nickname': 'Kim' },
+       #)
 
 @app.route('/output')
 def cesareans_output():
-    #pull 'birth_month' from input field and store it
-    patient = request.args.get('birth_month')
-      #just select the Cesareans  from the birth dtabase for the month that the user inputs
-    query = "SELECT index, attendant, birth_month FROM birth_data_table WHERE delivery_method='Cesarean' AND birth_month='%s'" % patient
+    #pull 'in_url' from input field and store it
+    in_url = request.args.get('in_url')
+    #just select the matching url from the articles table
+    query = "SELECT title, username, highlight, popdate, nlikes FROM articles WHERE url='%s'" % in_url
     print(query)
     query_results=pd.read_sql_query(query,con)
     print(query_results)
-    births = []
+    q_result_dict = []
     for i in range(0,query_results.shape[0]):
-        births.append(dict(index=query_results.iloc[i]['index'], attendant=query_results.iloc[i]['attendant'], birth_month=query_results.iloc[i]['birth_month']))
-        the_result = mod.ModelIt(patient,births)
-    return render_template("output.html", births = births, the_result = the_result)
+        q_result_dict.append(dict(title=query_results.iloc[i]['title'], 
+                                  username=query_results.iloc[i]['username'], 
+                                  highlight=query_results.iloc[i]['highlight'],
+                                  popdate=query_results.iloc[i]['popdate'],
+                                  nlikes=query_results.iloc[i]['nlikes']
+                                  ))
+        #the_result = mod.ModelIt(in_url,q_result_dict)
+    return render_template("output.html", q_result_dict = q_result_dict)#, the_result = the_result)
 
