@@ -53,6 +53,16 @@
                         <h3>{{ q_row['highlight'] }}</h3> <br><br>
                         (Article popular on {{ q_row['popdate'] }}, with {{ q_row['nlikes'] }} favorites.)
         </p>
+
+          <div class = "container">
+
+          <form action="/fbpost">
+              <button type="submit" name='to_url' method='get' value="https://www.facebook.com/sharer/sharer.php?u={{ in_url }}&quote={{ q_row['highlight'] }}" class="btn btn-default btn-lg">Post on Facebook</button>
+              <!--<button type="submit" value="Go to Google" /> -->
+          </form>
+
+          </div> <!-- /.container-->
+
         {% endfor %}
       </div>
 
@@ -63,18 +73,9 @@
      </div><!-- /.container -->
 
 
-<div class = "container">
-
-<form action="/fbpost">
-    <button type="submit" class="btn btn-default btn-lg">Post on Facebook</button>
-    <!--<button type="submit" value="Go to Google" /> -->
-</form>
-
-</div> <!-- /.container-->
-
-https://www.facebook.com/sharer/sharer.php?u=https://medium.freecodecamp.org/a-hacker-stole-31m-of-ether-how-it-happened-and-what-it-means-for-ethereum-9e5dc29e33ce&quote=autopost
-
     <div class = "container">
+    <br><br><br><br>
+      <p><b>Find another highlight:<b></p>
 
       <form  action="/output" method="GET">
         <div class="form-group">

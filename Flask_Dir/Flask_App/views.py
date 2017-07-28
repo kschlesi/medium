@@ -1,5 +1,5 @@
 
-from flask import render_template, request
+from flask import render_template, request, redirect
 from Flask_App import app
 from sqlalchemy import create_engine
 from sqlalchemy_utils import database_exists, create_database
@@ -42,5 +42,11 @@ def cesareans_output():
                                   nlikes=query_results.iloc[i]['nlikes']
                                   ))
         #the_result = mod.ModelIt(in_url,q_result_dict)
-    return render_template("output.html", q_results_dict = q_results_dict)#, the_result = the_result)
+    return render_template("output.html", q_results_dict = q_results_dict, in_url=in_url)#, the_result = the_result)
+
+@app.route('/fbpost')
+def facebook_post():
+    to_url = request.args.get('to_url')
+    return redirect(to_url, code=302)
+
 
