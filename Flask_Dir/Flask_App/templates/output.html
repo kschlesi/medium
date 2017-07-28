@@ -46,6 +46,34 @@
         <!--<p>Enter article information</p> -->
     </div>
 
+    <div class="container">
+      <div class="starter-template">
+        {% for q_row in q_results_dict %}
+        <p>For the article <b>"{{q_row['title']}}"</b> by {{ q_row['username']}}, your highlight is:<br><br>
+                        <h3>{{ q_row['highlight'] }}</h3> <br><br>
+                        (Article popular on {{ q_row['popdate'] }}, with {{ q_row['nlikes'] }} favorites.)
+        </p>
+        {% endfor %}
+      </div>
+
+
+      <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
+      <script src="static/js/bootstrap.min.js"></script>
+
+     </div><!-- /.container -->
+
+
+<div class = "container">
+
+<form action="/fbpost">
+    <button type="submit" class="btn btn-default btn-lg">Post on Facebook</button>
+    <!--<button type="submit" value="Go to Google" /> -->
+</form>
+
+</div> <!-- /.container-->
+
+https://www.facebook.com/sharer/sharer.php?u=https://medium.freecodecamp.org/a-hacker-stole-31m-of-ether-how-it-happened-and-what-it-means-for-ethereum-9e5dc29e33ce&quote=autopost
+
     <div class = "container">
 
       <form  action="/output" method="GET">
@@ -63,29 +91,13 @@
 
   </div> <!-- /.container-->
 
+
+<!--
     <div class="container">
       <div class="starter-template">
-        <h3></h3>
-        {% for q_row in q_results_dict %}
-        <p>For the article {{q_row['title']}} by {{ q_row['username']}}, your highlight is:<br><br>
-                        <b>{{ q_row['highlight'] }}</b> <br><br>
-                        (Popular on {{ q_row['popdate'] }}, with {{ q_row['nlikes'] }} favorites.)
-        </p>
-        {% endfor %}
-      </div>
-
-
-      <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
-      <script src="static/js/bootstrap.min.js"></script>
-
-
-     </div><!-- /.container -->
-
-    <div class="container">
-      <div class="starter-template">
-        <h3>Query Result:</h3>
-        <!-- <p class="lead">Below is the result of the query.</p> -->
-      </div>
+        <h3>Query Result:</h3> 
+         <p class="lead">Below is the result of the query.</p> 
+    </div>
 
       <table class="table table-hover">
       <tr><th>title</th><th>username</th><th>highlight</th><th>popdate</th><th>nlikes</th></tr>
@@ -95,8 +107,7 @@
       </table>
 
 
-    </div><!-- /.container --> 
-
+    </div><! /.container --> 
 
     <!-- Bootstrap core JavaScript
     ================================================== -->
