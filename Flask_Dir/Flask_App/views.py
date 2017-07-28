@@ -24,11 +24,11 @@ def url_input():
        #)
 
 @app.route('/output')
-def cesareans_output():
+def medium_output():
     #pull 'in_url' from input field and store it
     in_url = request.args.get('in_url')
     print(in_url)
-    #just select the matching url from the articles table
+    #first select the matching url from the articles table
     query = "SELECT title, username, highlight, popdate, nlikes FROM articles WHERE url='%s'" % in_url
     print(query)
     query_results=pd.read_sql_query(query,con)
@@ -41,7 +41,9 @@ def cesareans_output():
                                   popdate=query_results.iloc[i]['popdate'],
                                   nlikes=query_results.iloc[i]['nlikes']
                                   ))
-        #the_result = mod.ModelIt(in_url,q_result_dict)
+    # now select the sentence from the sentence table with the greatest sim to the article
+    squery = "SELECT title, sentence, max(sentences.csim) FROM (articles WHERE url='%s' ) AS a RIGHT JOIN sentences ON a.postid = sentences.postid GROUP BY postid;" % in_url 
+
     return render_template("output.html", q_results_dict = q_results_dict, in_url=in_url)#, the_result = the_result)
 
 @app.route('/fbpost')
