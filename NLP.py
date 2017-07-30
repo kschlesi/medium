@@ -44,15 +44,17 @@ class NLProcessor():
             return_text = self.raw_text
         elif ttype=='tokenized':
             return_text = self.processed_text
+        elif ttype=='flat':
+            return_text = self.flat_text
 
         # return in correct format
         if output_type=='list':
             return return_text  # stored as string
         elif output_type=='dataframe':
             df = pd.DataFrame(return_text,index=index,columns=columns)
-            if ttype=='raw':
+            if ttype=='raw' or ttype=='flat':
                 df.transpose()
-                df.columns = [['raw_text']]
+                #df.columns = [['text']]
             return df
 
     def process_text(self, in_text=None, break_on=['.','?','!'], stopwords='default', to_stem=True, 
@@ -133,7 +135,7 @@ class NLCorporizer(NLProcessor):
         if self.frequencies==None:
             self.count_frequencies(texts)
 
-        texts = [[token for token in text if frequency[token] > text_frequency_min]
+        texts = [[token for token in text if frequencies[token] > text_frequency_min]
                 for text in texts]
         self.dictionary = corpora.Dictionary(texts)
 
@@ -143,9 +145,10 @@ class NLCorporizer(NLProcessor):
 
     def make_corpus(self,texts='default',fname='default'):
         '''takes atext, a list of lists of words per article, and a dictionary, and returns/saves corpus'''
+
         # check for dictionary 
         if self.dictionary==None:
-            self.make_dictionary(texts)
+            self.make_dictionary(texts=texts)
 
         # create corpus
         self.corpus_native = [self.dictionary.doc2bow(art) for art in texts]
@@ -157,16 +160,18 @@ class NLCorporizer(NLProcessor):
             self.corpus_native_path = fname
         corpora.MmCorpus.serialize(fname, corpus_native)
 
-    def get_corpus(self,fname='corpus.mm'):
-        '''loads and returns corpus'''
+    def load_corpus(self,fname='corpus.mm'):
+        '''loads corpus from a given filename (.mm corpus only)'''
         if self.corpus_native==None:
             self.corpus_native = corpora.MmCorpus(fname)
 
+    def get_corpus(self):
+        '''returns native corpus'''
         return self.corpus_native
 
 
 class NLModeler(NLCorporizer):
-    '''This class hold models and transformations (tfidf, lsa, ...)'''
+    '''This class holds models and transformations (tfidf, lsa, ...)'''
 
     def __init__(self, raw_text=[], swords=None, corpus_native_path='corpus.mm'):
         NLCorporizer.__init__(self, raw_text=[], swords=None, corpus_native_path='corpus.mm')
@@ -174,22 +179,94 @@ class NLModeler(NLCorporizer):
         self.corpus_tfidf = None
         self.lsa = None
         self.corpus_lsa = None
+        self.ddiv_corpus = None
 
-    def tfidf(self,corpus='default'):
-        '''creates tfidf and model'''
+    def make_tfidf(self,corpus='default'):
+        '''creates tfidf model and corpus'''
         if corpus=='default':
             corpus = self.corpus_native
 
         if corpus==None:
             try:
-                self.get_corpus()
+                self.load_corpus(self.corpus_native_path)
             except:
-                self.make_corpus()
+                self.make_corpus(fname=self.corpus_native_path)
             corpus = self.corpus_native
 
-        self.tfidf = models.TfidfModel(self.corpus_native)
-        self.corpus_tfidf = self.tfidf[self.corpus_native]
+        self.tfidf = models.TfidfModel(corpus)
+        self.corpus_tfidf = self.tfidf[corpus]
 
+    def make_lsa(self,corpus='tfidf',num_topics=200):
+        '''creates lsa model and corpus'''
+        if corpus=='tfidf':
+            corpus = self.corpus_tfidf
+        elif corpus=='native':
+            corpus = self.corpus_native
+
+        self.lsa = models.LsiModel(corpus, id2word=self.dictionary, num_topics=num_topics)
+        self.corpus_lsa = self.lsa[corpus]
+
+    def lsa(self):
+        '''returns lsa model'''
+        return self.lsa
+
+    def tfidf(self):
+        '''returns tfidf model'''
+        return self.tfidf
+
+    def make_ddiv_corpus(self,ftext='default'):
+        '''sets ddiv corpus'''
+        if ftext=='default':
+            if self.flat_text is None:
+                self.flatten_text()
+            ftext = self.flat_text
+
+        ddiv_corp = []
+        [ddiv_corp.append( dictionary.doc2bow(sent) ) for s in ftext]
+        self.ddiv_corpus = ddiv_corp
+
+    def ddiv_corpus(self):
+        '''returns ddiv corpus'''
+        return self.ddiv_corpus
+
+    def get_corpus(self,ctype='native',by_ddiv=False):
+        '''returns corpus -- overrides inherited get_corpus'''
+        if not by_ddiv:
+            if ctype=='native':
+                return self.corpus_native
+            elif ctype=='tfidf':
+                return self.corpus_tfidf
+            elif ctype=='lsa':
+                return self.corpus_lsa
+        if by_ddiv:
+            if self.ddiv_corpus is None:
+                self.make_ddiv_corpus()
+            if ctype=='native':
+                return self.ddiv_corpus
+            if ctype=='tfidf':
+                return self.tfidf[self.ddiv_corpus]
+            if ctype=='lsa':
+                return self.lsa[self.tfidf[self.ddiv_corpus]]
+
+
+
+class NLSimilarity(NLModeler):
+
+    def __init__(self):
+        NLModeler.__init__(self, raw_text=[], swords=None, corpus_native_path='corpus.mm', num_topics=200)
+        try:
+            self.load_corpus(corpus_native_path)
+        except: # type of exception...
+            self.make_corpus(fname=corpus_native_path)
+
+        if self.tfidf is None:
+            self.make_tfidf()
+        if self.lsa is None:
+            self.make_lsa(num_topics=num_topics)
+
+        self.lsa_index = similarities.Similarity('.',lsa[corp],num_features = 200)
+
+    
 
 
 
@@ -208,7 +285,7 @@ def process_paragraph(par,swords,to_stem=True):
         nstop_tokens = [porter.stem(t) for t in nstop_tokens]
     return nstop_tokens
 
-def process_text_paragraphs(atext,origdb,swords,ddiv_max_length=250):
+def process_text_paragraphs(atext,origdb,swords,ddiv_max_length=250,to_stem=True):
     '''atext is a list or series of textstrings (one from each article), 
     origdb is a list or series of corresponding original databse IDs (ints from 0-4)'''
     # initial text split
@@ -223,7 +300,7 @@ def process_text_paragraphs(atext,origdb,swords,ddiv_max_length=250):
 
     return [alist,removed_articles]
 
-def process_text_sentences(atext,origdb,swords,ddiv_max_length=250):
+def process_text_sentences(atext,origdb,swords,ddiv_max_length=250,to_stem=True):
     '''same processing, but does a sentence breakup rather than paragraph'''
     # initial text split
     alist = [initial_text_split(a,int(o)) for a,o in zip(atext,origdb)]
@@ -262,4 +339,6 @@ def plist_to_slist(plist):
 
 def flatten_list_of_lists(lol):
     l = []
-    return map(l.extend, lol)
+    for s in lol:
+        l.extend(s)
+    return l
