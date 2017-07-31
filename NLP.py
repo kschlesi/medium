@@ -15,7 +15,7 @@ from collections import defaultdict
 class NLProcessor():
     '''Class with methods to get, set, store, and basically process text data'''
 
-    def __init__(self, raw_text=[], swords=None):
+    def __init__(self, raw_text=[], swords=None, quick_input=False):
         self.raw_text = raw_text
         self.processed_text = None
         self.flat_text = None
@@ -25,6 +25,9 @@ class NLProcessor():
             self.swords = stopwords.words('english')
         else:
             self.swords = swords
+        if quick_input:
+            self.process_text(break_on=['.'],init_split_on=None)
+            self.flatten_text()
 
     def set_text(self, in_text, ttype='raw', single_doc=False):
         '''takes in text (a list of text per doc) and stores it'''
@@ -135,6 +138,9 @@ class NLCorporizer(NLProcessor):
         if self.frequencies==None:
             self.count_frequencies(texts)
 
+        if texts=='default':
+            texts = self.flat_text
+
         texts = [[token for token in text if self.frequencies[token] >= text_frequency_min]
                 for text in texts]
         self.dictionary = corpora.Dictionary(texts)
@@ -223,7 +229,7 @@ class NLModeler(NLCorporizer):
 
         ddiv_corp = []
         for art in ptext:
-            [ddiv_corp.append( dictionary.doc2bow(ddiv) ) for ddiv in art]
+            [ddiv_corp.append( self.dictionary.doc2bow(ddiv) ) for ddiv in art]
         self.ddiv_corpus = ddiv_corp
 
     def ddiv_corpus(self):
