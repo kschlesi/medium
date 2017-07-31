@@ -28,12 +28,14 @@ class URLTextSpider(scrapy.Spider):
             yield scrapy.Request(url=a_url, callback=self.parse)
 
     def parse(self, response):
-        # find all article posts on page (normally 20)
-        articles = response.css('.streamItem-cardInner--bmPostPreview')
+        # find all article text on page (within <p> tags)
+        t = response.xpath('//p/text()').extract()
+        t = '\n'.join(t)
 
-        # find, extract, and save each link from each article post
-        filename = 'medium_urls_dates.txt'
-        with open(filename,'a+') as f:
-            for article in articles:
-                url = article.css('a::attr(href)').extract()[-1].split('?')[0]
-                f.write(url + ',' + dateprint + '\n')
+        # process article text
+
+        # add article to corpus
+
+        # find similarity between each sentence and article in lsa space
+        
+        # find tf-idf thingy
