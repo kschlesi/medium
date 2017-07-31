@@ -135,7 +135,7 @@ class NLCorporizer(NLProcessor):
         if self.frequencies==None:
             self.count_frequencies(texts)
 
-        texts = [[token for token in text if frequencies[token] > text_frequency_min]
+        texts = [[token for token in text if self.frequencies[token] >= text_frequency_min]
                 for text in texts]
         self.dictionary = corpora.Dictionary(texts)
 
@@ -145,6 +145,8 @@ class NLCorporizer(NLProcessor):
 
     def make_corpus(self,texts='default',fname='default'):
         '''takes atext, a list of lists of words per article, and a dictionary, and returns/saves corpus'''
+        if texts=='default':
+            texts = self.flat_text
 
         # check for dictionary 
         if self.dictionary==None:
@@ -174,7 +176,7 @@ class NLModeler(NLCorporizer):
     '''This class holds models and transformations (tfidf, lsa, ...)'''
 
     def __init__(self, raw_text=[], swords=None, corpus_native_path='corpus.mm'):
-        NLCorporizer.__init__(self, raw_text=[], swords=None, corpus_native_path='corpus.mm')
+        NLCorporizer.__init__(self, raw_text=raw_text, swords=swords, corpus_native_path=corpus_native_path)
         self.tfidf = None
         self.corpus_tfidf = None
         self.lsa = None
@@ -214,15 +216,14 @@ class NLModeler(NLCorporizer):
         '''returns tfidf model'''
         return self.tfidf
 
-    def make_ddiv_corpus(self,ftext='default'):
+    def make_ddiv_corpus(self,ptext='default'):
         '''sets ddiv corpus'''
-        if ftext=='default':
-            if self.flat_text is None:
-                self.flatten_text()
-            ftext = self.flat_text
+        if ptext=='default':
+            ptext = self.processed_text
 
         ddiv_corp = []
-        [ddiv_corp.append( dictionary.doc2bow(sent) ) for s in ftext]
+        for art in ptext:
+            [ddiv_corp.append( dictionary.doc2bow(ddiv) ) for ddiv in art]
         self.ddiv_corpus = ddiv_corp
 
     def ddiv_corpus(self):
@@ -254,17 +255,21 @@ class NLSimilarity(NLModeler):
 
     def __init__(self):
         NLModeler.__init__(self, raw_text=[], swords=None, corpus_native_path='corpus.mm', num_topics=200)
-        try:
-            self.load_corpus(corpus_native_path)
-        except: # type of exception...
-            self.make_corpus(fname=corpus_native_path)
+        self.lsa_index = None
 
-        if self.tfidf is None:
-            self.make_tfidf()
-        if self.lsa is None:
-            self.make_lsa(num_topics=num_topics)
+        # try:
+        #     self.load_corpus(corpus_native_path)
+        # except: # type of exception...
+        #     self.make_corpus(fname=corpus_native_path)
 
-        self.lsa_index = similarities.Similarity('.',lsa[corp],num_features = 200)
+        # if self.tfidf is None:
+        #     self.make_tfidf()
+        # if self.lsa is None:
+        #     self.make_lsa(num_topics=num_topics)
+
+        # self.lsa_index = similarities.Similarity('.',lsa[corp],num_features = 200)
+
+
 
     
 

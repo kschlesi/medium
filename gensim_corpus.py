@@ -32,4 +32,4 @@ if __name__ == '__main__':
 	pkl_file.close()
 	
 	# save it ...
-	corp = make_corpus(atext,dictionary,'atext_train_corp.mm')
+	corp = make_corpus(atext,dictionary,'alldoc_corpus.mm')
