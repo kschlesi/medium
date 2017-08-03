@@ -21,6 +21,7 @@ class NLProcessor():
         self.flat_text = None
         self.removed_articles = None
         self.word_count = None
+        self.ddiv_count = None
         if swords == None:
             self.swords = stopwords.words('english')
         else:
@@ -97,6 +98,16 @@ class NLProcessor():
         if text=='default':
             text = self.processed_text
         self.flat_text = [flatten_list_of_lists(art) for art in text]
+
+    def make_ddiv_count(self,text='default'):
+        '''finds ddiv count per article'''
+        if text=='default':
+            text = self.processed_text
+        self.ddiv_count = [len(a) for a in text]
+
+    def get_ddiv_count(self):
+        '''returns ddiv count'''
+        return self.ddiv_count
 
     def get_word_count(self):
         '''returns word count'''
