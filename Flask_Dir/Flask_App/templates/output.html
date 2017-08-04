@@ -24,6 +24,8 @@
     <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
     <script src="../../assets/js/ie-emulation-modes-warning.js"></script>
 
+    <link href="../../static/Models/rfm_model.pkl">
+
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
       <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
@@ -34,7 +36,6 @@
   <body>
 
     <nav class="navbar navbar-inverse navbar-fixed-top">
-"templates/cesareans.html" 89L, 3618C
         </div><!--/.nav-collapse -->
       </div>
     </nav>
@@ -50,15 +51,36 @@
       <div class="starter-template">
         {% for q_row in q_results_dict %}
         <p>For the article <b>"{{q_row['title']}}"</b> by {{ q_row['username']}}, your highlight is:<br><br>
-                        <h3>{{ q_row['highlight'] }}</h3> <br><br>
+                        <h3>{{ htext_dict[0] }}.</h3> <br><br>
                         (Article popular on {{ q_row['popdate'] }}, with {{ q_row['nlikes'] }} favorites.)
+                        <br><br>
+        </p>
+        
+<!-- /.col-sm-4 <div class="col-sm-4">
+          <div class="list-group">
+            <a href="#" class="list-group-item active">
+              Cras justo odio
+            </a>
+            <a href="#" class="list-group-item">Dapibus ac facilisis in</a>
+            <a href="#" class="list-group-item">Morbi leo risus</a>
+            <a href="#" class="list-group-item">Porta ac consectetur ac</a>
+            <a href="#" class="list-group-item">Vestibulum at eros</a>
+          </div>
+        </div> -->
+
+
+        <p>
+        Other suggestions:
+        <br><br>
+        <b>{{htext_dict[1]}}.</b>
+        <br><br>
+        <b>{{htext_dict[2]}}.</b>
         </p>
 
           <div class = "container">
 
           <form action="/fbpost">
-              <button type="submit" name='to_url' method='get' value="https://www.facebook.com/sharer/sharer.php?u={{ in_url }}&quote={{ q_row['highlight'] }}" class="btn btn-default btn-lg">Post on Facebook</button>
-              <!--<button type="submit" value="Go to Google" /> -->
+              <button type="submit" name='to_url' method='get' value="https://www.facebook.com/sharer/sharer.php?u={{ in_url }}&quote={{ q_row['highlight'] }}" class="btn btn-primary btn-lg">Post on Facebook</button>
           </form>
 
           </div> <!-- /.container-->
@@ -83,7 +105,8 @@
           <input type="url" id="in_url" name='in_url' placeholder="e.g. ">
         </div>
         <div>
-          <button type="submit" class="btn btn-default btn-lg">Find Highlight!</button>
+          <button type="submit" class="btn btn-lg btn-warning">Find Highlight!</button>
+          <!--<button type="submit" class="btn btn-default btn-lg">Find Highlight!</button> -->
         </div>
       </form>
     </div>
