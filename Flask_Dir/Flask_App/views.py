@@ -24,12 +24,12 @@ def url_input():
        #)
 
 @app.route('/output')
-def cesareans_output():
+def compute_output():
     #pull 'in_url' from input field and store it
     in_url = request.args.get('in_url')
     print(in_url)
     #just select the matching url from the articles table
-    query = "SELECT title, username, highlight, popdate, nlikes FROM articles WHERE url='%s'" % in_url
+    query = "SELECT title, username, highlight, popdate, nlikes, `text`, postid, origdb FROM articles WHERE url='%s'" % in_url
     print(query)
     query_results=pd.read_sql_query(query,con)
     print(query_results)
@@ -41,7 +41,7 @@ def cesareans_output():
                                   popdate=query_results.iloc[i]['popdate'],
                                   nlikes=query_results.iloc[i]['nlikes']
                                   ))
-        #the_result = mod.ModelIt(in_url,q_result_dict)
+        the_result = mod.ModelIt(in_url,)
     return render_template("output.html", q_results_dict = q_results_dict, in_url=in_url)#, the_result = the_result)
 
 @app.route('/fbpost')
