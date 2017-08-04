@@ -62,7 +62,7 @@ class NLProcessor():
             return df
 
     def process_text(self, in_text=None, break_on=['.','?','!'], stopwords='default', to_stem=True, 
-                        init_split_on='database', origdb=None, ddiv_max_length=250):
+                        init_split_on='database', origdb=None, ddiv_max_length=250,keep_raw=False):
         '''does split, lower, break into ddivs, tokenize, remove swords, and stem if desired'''
         
         if in_text is None:
@@ -75,7 +75,7 @@ class NLProcessor():
         if init_split_on=='database':
             if origdb is not None:
                 if '.' in break_on:
-                    p_output = process_text_sentences(in_text,origdb,swords,ddiv_max_length,to_stem)
+                    p_output = process_text_sentences(in_text,origdb,swords,ddiv_max_length,to_stem,keep_raw)
                 else:
                     p_output = process_text_paragraphs(in_text,origdb,swords,ddiv_max_length,to_stem)
                 atext = p_output[0]
@@ -322,7 +322,7 @@ def process_text_paragraphs(atext,origdb,swords,ddiv_max_length=250,to_stem=True
 
     return [alist,removed_articles]
 
-def process_text_sentences(atext,origdb,swords,ddiv_max_length=250,to_stem=True):
+def process_text_sentences(atext,origdb,swords,ddiv_max_length=250,to_stem=True,keep_raw=False):
     '''same processing, but does a sentence breakup rather than paragraph'''
     # initial text split
     alist = [initial_text_split(a,int(o)) for a,o in zip(atext,origdb)]
@@ -335,7 +335,8 @@ def process_text_sentences(atext,origdb,swords,ddiv_max_length=250,to_stem=True)
     alist = [plist_to_slist(plist) for plist in alist]
     
     # process each paragraph
-    alist = [[process_paragraph(p,swords,to_stem) for p in a] for a in alist]
+    if not keep_raw:
+        alist = [[process_paragraph(p,swords,to_stem) for p in a] for a in alist]
         
     return [alist,removed_articles]
 
