@@ -51,22 +51,33 @@
       <div class="starter-template">
         {% for q_row in q_results_dict %}
         <p>For the article <b>"{{q_row['title']}}"</b> by {{ q_row['username']}}, your highlight is:<br><br>
-                        <h3>{{ htext_dict[0] }}.</h3> <br><br>
-                        (Article popular on {{ q_row['popdate'] }}, with {{ q_row['nlikes'] }} favorites.)
+                        <h3>{{ htext_dict[0] }}.</h3> 
                         <br><br>
         </p>
-        
+
+          <div class = "container">
+
+          <form action="/fbpost">
+              <button type="submit" name='to_url' method='get' value="https://www.facebook.com/sharer/sharer.php?u={{ in_url }}&quote={{ htext_dict[0] }}." class="btn btn-primary btn-lg">Post on Facebook</button>
+          </form>
+
+          </div> <!-- /.container-->        
+        <p>
+        <br><br> 
+        (Article popular on {{ q_row['popdate'] }}, with {{ q_row['nlikes'] }} favorites.)
+        <br><br>
+        </p>
+
 <!-- /.col-sm-4 -->
        <div class="col-sm-4">
+          <title class="panel-title">Other suggestions:</title>
           <div class="list-group">
             <form action="/output_alt">
             <button type="submit" name='page_no' method='get' value="1" class="list-group-item">{{htext_dict[1]}}.</button>
             <button type="submit" name='page_no' method='get' value="2" class="list-group-item">{{htext_dict[2]}}.</button>
-            <input type="hidden" name="in_url" method='get' value="in_url"/>
-            <input type="hidden" name="q_restuls_dict" value="q_results_dict"/>
-            <input type="hidden" name="htext_dict" value="htext_dict"/>
-            <!--<a href="/output_alt1" class="list-group-item">{{htext_dict[1]}}.</a>
-            <a href="/output_alt2" class="list-group-item">{{htext_dict[2]}}.</a> -->
+            <input type="hidden" name="in_url" method='get' value="{{in_url}}"/>
+            <input type="hidden" name="q_results_dict" value="{{q_results_dict}}"/>
+            <input type="hidden" name="htext_dict" value="{{htext_dict}}"/>
             </form>
           </div>
         </div> 
@@ -80,13 +91,6 @@
         <b>{{htext_dict[2]}}.</b>
         </p> -->
 
-          <div class = "container">
-
-          <form action="/fbpost">
-              <button type="submit" name='to_url' method='get' value="https://www.facebook.com/sharer/sharer.php?u={{ in_url }}&quote={{ htext_dict[0] }}." class="btn btn-primary btn-lg">Post on Facebook</button>
-          </form>
-
-          </div> <!-- /.container-->
 
         {% endfor %}
       </div>

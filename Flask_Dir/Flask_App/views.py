@@ -7,6 +7,7 @@ import pandas as pd
 import psycopg2
 import pickle
 from Flask_App import a_Model as mod
+from ast import literal_eval
 
 user = 'kimberly' #add your username here (same as previous postgreSQL)                      
 host = 'localhost'
@@ -57,16 +58,29 @@ def compute_output():
 
     return render_template("output.html", q_results_dict = q_results_dict, htext_dict = htext_dict, in_url=in_url)
 
-# @app.route('/static/Models/rfm_model.pkl',methods=['GET'])
-# def get_model_rfm():
-#   #filename = './static/Models/rfm_model.pkl'
-#   url = url_for('static',filename='Models/rfm_model.pkl')
-#   return send_file(url, mimetype='application/octet-stream')
+@app.route('/output_alt')
+def switch_output():
+    # get necessary args
+    in_url = request.args.get('in_url')
+    q_results_dict = request.args.get('q_results_dict')
+    q_results_dict = literal_eval(q_results_dict)
+    #print(q[0]['title'])
+    htext_dict = request.args.get('htext_dict')
+    htext_dict = literal_eval(htext_dict)
+    page_no = request.args.get('page_no')
+    #print(page_no)
+    page_no = int(page_no)
 
-# @app.route('/static/Models/gbm_model.pkl',methods=['GET'])
-# def get_model_gbm():
-#   filename = './static/Models/gbm_model.pkl'
-#   return send_file(filename, mimetype='application/octet-stream')
+    new_dict = {}
+    new_dict[0] = htext_dict[page_no]
+    new_dict[page_no] = htext_dict[0]
+    if page_no==1:
+        new_dict[2] = htext_dict[2]
+    elif page_no==2:
+        new_dict[1] = htext_dict[1]
+
+    return render_template("output.html", q_results_dict = q_results_dict, htext_dict = new_dict, in_url=in_url)
+
 
 @app.route('/fbpost')
 def facebook_post():
