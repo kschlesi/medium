@@ -1,6 +1,8 @@
 *.csv
+Flask_Dir/Flask_App/__pycache__/*
 *.pkl
 *.npy*
 *.d2v*
 *.mm*
 *.pyc*
+*.pyc

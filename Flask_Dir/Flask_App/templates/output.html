@@ -57,22 +57,28 @@
         </p>
         
 <!-- /.col-sm-4 -->
-   <!--     <div class="col-sm-4">
+       <div class="col-sm-4">
           <div class="list-group">
-            <button type="submit" name='' method='get' value="https://www.facebook.com/sharer/sharer.php?u={{ in_url }}&quote={{ htext_dict[0] }}." class="btn btn-primary btn-lg">Post on Facebook</button>
-            <a href="/output_alt1" class="list-group-item">{{htext_dict[1]}}.</a>
-            <a href="/output_alt2" class="list-group-item">{{htext_dict[2]}}.</a>
+            <form action="/output_alt">
+            <button type="submit" name='page_no' method='get' value="1" class="list-group-item">{{htext_dict[1]}}.</button>
+            <button type="submit" name='page_no' method='get' value="2" class="list-group-item">{{htext_dict[2]}}.</button>
+            <input type="hidden" name="in_url" method='get' value="in_url"/>
+            <input type="hidden" name="q_restuls_dict" value="q_results_dict"/>
+            <input type="hidden" name="htext_dict" value="htext_dict"/>
+            <!--<a href="/output_alt1" class="list-group-item">{{htext_dict[1]}}.</a>
+            <a href="/output_alt2" class="list-group-item">{{htext_dict[2]}}.</a> -->
+            </form>
           </div>
-        </div> -->
+        </div> 
 
 
-       <p>
+    <!--   <p>
         Other suggestions:
         <br><br>
         <b>{{htext_dict[1]}}.</b>
         <br><br>
         <b>{{htext_dict[2]}}.</b>
-        </p> 
+        </p> -->
 
           <div class = "container">
 
