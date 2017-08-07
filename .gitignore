@@ -6,3 +6,5 @@ Flask_Dir/Flask_App/__pycache__/*
 *.mm*
 *.pyc*
 *.pyc
+Flask_Dir/Flask_App/static/Models/*m_model.pkl
+
