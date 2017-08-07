@@ -56,31 +56,28 @@
                         <br><br>
         </p>
         
-<!-- /.col-sm-4 <div class="col-sm-4">
+<!-- /.col-sm-4 -->
+   <!--     <div class="col-sm-4">
           <div class="list-group">
-            <a href="#" class="list-group-item active">
-              Cras justo odio
-            </a>
-            <a href="#" class="list-group-item">Dapibus ac facilisis in</a>
-            <a href="#" class="list-group-item">Morbi leo risus</a>
-            <a href="#" class="list-group-item">Porta ac consectetur ac</a>
-            <a href="#" class="list-group-item">Vestibulum at eros</a>
+            <button type="submit" name='' method='get' value="https://www.facebook.com/sharer/sharer.php?u={{ in_url }}&quote={{ htext_dict[0] }}." class="btn btn-primary btn-lg">Post on Facebook</button>
+            <a href="/output_alt1" class="list-group-item">{{htext_dict[1]}}.</a>
+            <a href="/output_alt2" class="list-group-item">{{htext_dict[2]}}.</a>
           </div>
         </div> -->
 
 
-        <p>
+       <p>
         Other suggestions:
         <br><br>
         <b>{{htext_dict[1]}}.</b>
         <br><br>
         <b>{{htext_dict[2]}}.</b>
-        </p>
+        </p> 
 
           <div class = "container">
 
           <form action="/fbpost">
-              <button type="submit" name='to_url' method='get' value="https://www.facebook.com/sharer/sharer.php?u={{ in_url }}&quote={{ q_row['highlight'] }}" class="btn btn-primary btn-lg">Post on Facebook</button>
+              <button type="submit" name='to_url' method='get' value="https://www.facebook.com/sharer/sharer.php?u={{ in_url }}&quote={{ htext_dict[0] }}." class="btn btn-primary btn-lg">Post on Facebook</button>
           </form>
 
           </div> <!-- /.container-->
